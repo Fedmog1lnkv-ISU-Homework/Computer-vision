@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "computer-vision"
+version = "0.1.0"
+description = ""
+authors = ["Fedor Kuznetsov <kuzneczov-f@susanoo.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+opencv-python = "^4.8.0.76"
+scikit-image = "^0.21.0"
+matplotlib = "^3.8.0"
+ipython = "^8.15.0"
+requests = "^2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
