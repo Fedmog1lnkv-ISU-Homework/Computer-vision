@@ -7,10 +7,7 @@ def calculate_nominal_resolution(filename):
     with open(filename, "r") as file:
         max_object_size_mm = float(file.readline())
 
-        image_matrix = []
-        for line in file.readlines()[1:]:
-            row = [int(value) for value in line.split()]
-            image_matrix.append(row)
+        image_matrix = np.loadtxt(file)
 
     image_width_pixels = len(image_matrix[0])
 
