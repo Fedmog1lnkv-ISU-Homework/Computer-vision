@@ -6,12 +6,15 @@ import matplotlib.pyplot as plt
 def calculate_nominal_resolution(filename):
     with open(filename, "r") as file:
         max_object_size_mm = float(file.readline())
-
         image_matrix = np.loadtxt(file)
 
-    image_width_pixels = len(image_matrix[0])
+    object = [row for row in image_matrix if 1 in row]
+    object_width_pixels = len(object)
 
-    return max_object_size_mm / image_width_pixels
+    if object_width_pixels == 0:
+        return None
+
+    return max_object_size_mm / object_width_pixels
 
 
 if __name__ == "__main__":
@@ -23,8 +26,13 @@ if __name__ == "__main__":
     for i, file in enumerate(os.listdir(files_directory)):
         if file.endswith(".txt"):
             file_path = os.path.join(files_directory, file)
+
             nominal_resolution = calculate_nominal_resolution(file_path)
-            print(f"{file}\t\t{nominal_resolution:.2f}")
+
+            if nominal_resolution is None:
+                print(f"{file}\t\tobject not found")
+            else:
+                print(f"{file}\t\t{nominal_resolution:.5f}")
 
             row = i // 3
             col = i % 3
@@ -32,7 +40,12 @@ if __name__ == "__main__":
 
             image = np.loadtxt(file_path, skiprows=1)
             ax.imshow(image, cmap='gray')
-            ax.set_title(f"{file}\n{nominal_resolution:.2f} mm/pixel", fontsize=10)
+
+            if nominal_resolution is None:
+                ax.set_title(f"{file}\nobject not found", fontsize=10)
+            else:
+                ax.set_title(f"{file}\n{nominal_resolution:.5f} mm/pixel", fontsize=10)
+
             ax.axis("off")
 
     fig.suptitle("Nominal resolutions", fontsize=14)
