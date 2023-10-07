@@ -20,7 +20,8 @@ def analyze_wires(file_path, img_logs=False):
         wires = {}
         for label_num in range(1, num_features + 1):
             wire_mask = labeled_data == label_num
-            wires[f"Wire {label_num}"] = analyze_individual_wire(wire_mask)
+            print(wire_mask)
+            wires[f"Wire {label_num}"] = analyze_individual_wire(wire_mask, img_logs)
 
         return wires
 
@@ -28,9 +29,10 @@ def analyze_wires(file_path, img_logs=False):
         print(f"Error: {e}")
 
 
-def analyze_individual_wire(wire_mask):
+def analyze_individual_wire(wire_mask, img_logs=False):
     dilated_wire = binary_opening(wire_mask, structure=np.ones((3, 1)))
     labeled_data, num_features = label(dilated_wire)
+    img_show(dilated_wire, "Wire")
     return num_features
 
 
@@ -39,8 +41,6 @@ def img_show(data, title):
     plt.title(title)
     plt.show()
 
-
-import os
 
 files_directory = "files"
 
