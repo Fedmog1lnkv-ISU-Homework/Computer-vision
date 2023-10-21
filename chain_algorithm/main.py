@@ -1,37 +1,35 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy import ndimage
+
+num_directions_arr = ((0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1))
 
 
 def is_perimeter(y, x):
-    directions_clockwise = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    directions_counterclockwise = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 
-    for dy, dx in directions_clockwise:
+    for dy, dx in directions_counterclockwise:
         neighbor_y, neighbor_x = y + dy, x + dx
-        if neighbor_x >= 0 and neighbor_x < data.shape[1] and neighbor_y >= 0 and neighbor_y < \
-                data.shape[0]:
-            if data[neighbor_y, neighbor_x] == 0:
-                return True
+        if 0 <= neighbor_x < data.shape[1] and 0 <= neighbor_y < data.shape[0] and data[neighbor_y, neighbor_x] == 0:
+            return True
     return False
 
 
-def neighbors_clockwise(y, x, perimeter_points):
-    directions_clockwise = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
-    # directions_clockwise = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, -1), (-1, 1)]
+def neighbors_counterclockwise(y, x, perimeter_points):
+    directions_counterclockwise = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
 
-    for dy, dx in directions_clockwise:
+    for dy, dx in directions_counterclockwise:
         neighbor_y, neighbor_x = y + dy, x + dx
-        if neighbor_x >= 0 and neighbor_x < data.shape[1] and neighbor_y >= 0 and neighbor_y < \
-                data.shape[0]:
+        if 0 <= neighbor_x < data.shape[1] and 0 <= neighbor_y < data.shape[0] and \
+                data[neighbor_y, neighbor_x] == 1 and (neighbor_y, neighbor_x) not in perimeter_points and is_perimeter(
+            neighbor_y, neighbor_x):
+            num_direction = num_directions_arr.index((dy, dx))
+            return neighbor_y, neighbor_x, num_direction
 
-            if data[neighbor_y, neighbor_x] == 1 and (
-                    neighbor_y, neighbor_x) not in perimeter_points and is_perimeter(neighbor_y, neighbor_x):
-                return neighbor_y, neighbor_x
-
-    return None, None
+    return None, None, None
 
 
-def chain(data):
+def chain(data, show_plot=False):
+    start_y, start_x = None, None
     for x in range(data.shape[1]):
         for y in range(data.shape[0]):
             if data[y, x] == 1:
@@ -40,10 +38,16 @@ def chain(data):
         if start_y is not None:
             break
 
-    perimeter_points = set()
+    if start_y is None or start_x is None:
+        print("There is no starting point.")
+        return []
 
-    plt.ion()
-    fig, ax = plt.subplots()
+    perimeter_points = set()
+    directions = []
+
+    if show_plot:
+        plt.ion()
+        fig, ax = plt.subplots()
 
     first_point_added = False
 
@@ -53,17 +57,18 @@ def chain(data):
             if not first_point_added:
                 first_point_added = True
 
-        print(y, x)
+        if show_plot:
+            ax.clear()
+            ax.imshow(data, cmap='gray')
 
-        ax.clear()
-        ax.imshow(data, cmap='gray')
+            added_points = np.array(list(perimeter_points))
+            ax.plot(added_points[:, 1], added_points[:, 0], 'bo', markersize=2)
 
-        added_points = np.array(list(perimeter_points))
-        ax.plot(added_points[:, 1], added_points[:, 0], 'bo', markersize=2)
+            plt.pause(0.1)
 
-        plt.pause(0.00000000001)
-
-        y, x = neighbors_clockwise(y, x, perimeter_points)
+        y, x, num_direction = neighbors_counterclockwise(y, x, perimeter_points)
+        if num_direction is not None:
+            directions += [num_direction]
 
         if y is None or x is None:
             break
@@ -71,10 +76,11 @@ def chain(data):
         if first_point_added and (y, x) == (start_y, start_x):
             break
 
-    plt.ioff()
-    plt.show()
+    if show_plot:
+        plt.ioff()
+        plt.show()
 
-    return list(perimeter_points)
+    return directions
 
 
 data = np.array(
@@ -88,8 +94,7 @@ data = np.array(
         [1, 1, 1, 1, 1, 1, 0],
         [0, 1, 1, 1, 1, 0, 0],
         [0, 0, 1, 1, 0, 0, 0],
-
     ]
 )
 
-print(chain(data))
+print(chain(data, True))
