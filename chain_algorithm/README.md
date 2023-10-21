@@ -7,3 +7,8 @@
 ![example.png](src%2Fexample.png)
 
 `output: [1, 1, 0, 7, 7, 7, 5, 5, 6, 6, 5, 4, 3, 2, 1, 3, 2]`
+
+> Начало с координат
+> **x** = 0 **y** = 6
+> Направления согласно изображению
+> ![directions.png](src%2Fdirections.png)
