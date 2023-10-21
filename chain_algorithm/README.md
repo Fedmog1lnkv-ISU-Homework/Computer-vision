@@ -11,4 +11,5 @@
 > Начало с координат
 > **x** = 0 **y** = 6
 > Направления согласно изображению
-> ![directions.png](src%2Fdirections.png)
+
+![directions.png](src%2Fdirections.png)
