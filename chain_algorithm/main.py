@@ -53,11 +53,12 @@ def chain(data, show_plot=False):
 
     while True:
         if (y, x) not in perimeter_points:
-            perimeter_points.add((y, x))
             if not first_point_added:
                 first_point_added = True
+            else:
+                perimeter_points.add((y, x))
 
-        if show_plot:
+        if show_plot and len(perimeter_points) != 0:
             ax.clear()
             ax.imshow(data, cmap='gray')
 
@@ -83,18 +84,44 @@ def chain(data, show_plot=False):
     return directions
 
 
-data = np.array(
-    [
-        [0, 0, 1, 1, 0, 0, 0],
-        [0, 1, 1, 1, 1, 0, 0],
-        [0, 1, 1, 1, 1, 0, 0],
-        [0, 0, 1, 1, 1, 0, 0],
-        [0, 1, 1, 1, 1, 1, 0],
-        [0, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 0],
-        [0, 1, 1, 1, 1, 0, 0],
-        [0, 0, 1, 1, 0, 0, 0],
-    ]
-)
+# data = np.array(
+#     [
+#         [0, 0, 1, 1, 0, 0, 0],
+#         [0, 1, 1, 1, 1, 0, 0],
+#         [0, 1, 1, 1, 1, 0, 0],
+#         [0, 0, 1, 1, 1, 0, 0],
+#         [0, 1, 1, 1, 1, 1, 0],
+#         [0, 1, 1, 1, 1, 1, 1],
+#         [1, 1, 1, 1, 1, 1, 0],
+#         [0, 1, 1, 1, 1, 0, 0],
+#         [0, 0, 1, 1, 0, 0, 0],
+#     ]
+# )
 
-print(chain(data, True))
+data = np.zeros((5, 5))
+data[1:3, 1:-1] = 1
+
+
+def curvature(chain):
+    result = []
+    for i in range(len(chain)):
+        if i == len(chain) - 1:
+            result.append(chain[i] - chain[0])
+        else:
+            result.append(chain[i] - chain[i + 1])
+    return result
+
+
+def normalize(chain):
+    for i in range(len(chain)):
+        chain[i] = chain[i] % 8
+
+
+chain_n = chain(data, True)
+print(chain_n)
+
+chain_n = curvature(chain_n)
+print(chain_n)
+
+normalize(chain_n)
+print(chain_n)
