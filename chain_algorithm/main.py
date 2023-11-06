@@ -117,11 +117,25 @@ def normalize(chain):
         chain[i] = chain[i] % 8
 
 
-chain_n = chain(data, True)
-print(chain_n)
+def is_equal(chain_1, chain_2):
+    res_copy = chain_1.copy()
+    while res_copy != chain_2:
+        last = res_copy[len(res_copy) - 1]
+        res_copy = [res_copy[i - 1] if i else 0 for i in range(len(res_copy))]
+        res_copy[0] = last
+    return res_copy == chain_2
 
-chain_n = curvature(chain_n)
-print(chain_n)
 
-normalize(chain_n)
-print(chain_n)
+chain_1 = chain(data, False)
+chain_2 = chain(data.transpose(), False)
+
+print("chain_1: ", chain_1)
+print("chain_2: ", chain_2)
+
+print("chain_1 == chain_2: ", is_equal(chain_1, chain_2))
+
+chain_1 = curvature(chain_1)
+print("chain_1 curvature:", chain_1)
+
+normalize(chain_1)
+print("chain_1 normalize:", chain_1)
