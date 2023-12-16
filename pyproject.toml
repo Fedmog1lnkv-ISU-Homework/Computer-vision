@@ -12,6 +12,8 @@ scikit-image = "^0.21.0"
 matplotlib = "^3.8.0"
 ipython = "^8.15.0"
 requests = "^2.31.0"
+pyzmq = "^25.1.2"
+tqdm = "^4.66.1"
 
 
 [build-system]
